@@ -24,6 +24,9 @@ format_content_column_name = 'Human1'
 #
 f = open(input_file)
 unique_gqx_codes = {}
+unique_filter_codes = {}
+correct_pass = {}
+gqx_scores = {}
 for index, line in enumerate(f):
     line = line.strip()
     
@@ -34,6 +37,7 @@ for index, line in enumerate(f):
         header = line.split('\t')
         format_index = header.index('FORMAT')
         format_content_index = header.index(format_content_column_name)
+        filter_index = header.index('FILTER')
     else:
         line = line.split('\t')
         formats = line[format_index]
@@ -45,7 +49,36 @@ for index, line in enumerate(f):
             gqx_content = int(contents_split[gqx_index])
             unique_gqx_codes[gqx_content] = None
 
-pp.pprint(unique_gqx_codes)
+            filter_status = line[filter_index].strip()
+            if filter_status.lower().find('gqx') == -1:
+                if not gqx_content in gqx_scores:
+                    gqx_scores[gqx_content] = []
+                gqx_scores[gqx_content].append(line)
+
+
+score_list = sorted(list(gqx_scores.keys()))
+for score in score_list:
+    for line in gqx_scores[score]:
+        print(score, line)
+
+
+
+#             if not line[filter_index] in unique_filter_codes:
+#                 unique_filter_codes[line[filter_index]] = 0
+#             unique_filter_codes[line[filter_index]] += 1
+
+#pp.pprint(unique_gqx_codes)
+#pp.pprint(unique_filter_codes)
+
+"""
+{'HighDPFRatio': 16,
+ 'HighDepth': 4,
+ 'LowGQX': 96932,
+ 'LowGQX;HighDPFRatio': 931,
+ 'LowGQX;HighDPFRatio;HighDepth': 88,
+ 'LowGQX;HighDepth': 4358,
+ 'PASS': 189}
+"""
 
 
     
